@@ -14,18 +14,24 @@ func capitalize(s string) string {
 	}
 	return strings.ToUpper(string(r[0])) + strings.ToLower(string(r[1:]))
 }
-func nextWordStart(content []string, i int) (byte, bool) {
+func nextWordStart(content []string, i int) string {
 	for j := i + 1; j < len(content); j++ {
 		w := strings.TrimLeft(content[j], `'"([{`)
 		if w != "" {
-			return w[0], true
+			return string(w[0])
 		}
 	}
-	return 0, false
+	return ""
 }
-func isvowel(v byte) bool {
-	word := strings.ToLower(string(v))
+func isvowel(v string) bool {
+	word := strings.ToLower(v)
 	return word == "a" || word == "e" || word == "i" || word == "u" || word == "o" || word == "h"
+}
+func checkOutput(output string) error {
+	if !strings.HasSuffix(strings.ToLower(output), ".txt") {
+		return fmt.Errorf("refusing to write to a Go file: %s", output)
+	}
+	return nil
 }
 
 func ProcessText(input string) string {
@@ -40,7 +46,7 @@ func ProcessText(input string) string {
 			for i := 0; i < len(content); i++ {
 				if content[i] == "(hex)" {
 					if i > 0 {
-						hex, err := strconv.ParseUint(content[i-1], 16, 64)
+						hex, err := strconv.ParseInt(content[i-1], 16, 64)
 						if err == nil {
 							content[i-1] = fmt.Sprint(hex)
 						}
@@ -49,7 +55,7 @@ func ProcessText(input string) string {
 					i--
 				} else if content[i] == "(bin)" {
 					if i > 0 {
-						bin, err := strconv.ParseUint(content[i-1], 2, 64)
+						bin, err := strconv.ParseInt(content[i-1], 2, 64)
 						if err == nil {
 							content[i-1] = fmt.Sprint(bin)
 						}
@@ -76,9 +82,9 @@ func ProcessText(input string) string {
 					i--
 				} else if content[i] == "(low," {
 					if i+1 < len(content) {
-						num := strings.TrimRight(content[i+1], ")")
+						num, bool := strings.CutSuffix(content[i+1], ")")
 						nb, err := strconv.Atoi(num)
-						if err == nil {
+						if err == nil && bool {
 							for nb > 0 {
 								if nb <= i {
 									content[i-nb] = strings.ToLower(content[i-nb])
@@ -93,9 +99,9 @@ func ProcessText(input string) string {
 					}
 				} else if content[i] == "(up," {
 					if i+1 < len(content) {
-						num := strings.TrimRight(content[i+1], ")")
+						num, bool := strings.CutSuffix(content[i+1], ")")
 						nb, err := strconv.Atoi(num)
-						if err == nil {
+						if err == nil && bool {
 							for nb > 0 {
 								if nb <= i {
 									content[i-nb] = strings.ToUpper(content[i-nb])
@@ -110,9 +116,9 @@ func ProcessText(input string) string {
 					}
 				} else if content[i] == "(cap," {
 					if i+1 < len(content) {
-						num := strings.TrimRight(content[i+1], ")")
+						num, bool := strings.CutSuffix(content[i+1], ")")
 						nb, err := strconv.Atoi(num)
-						if err == nil {
+						if err == nil && bool {
 							for nb > 0 {
 								if nb <= i {
 									content[i-nb] = capitalize(content[i-nb])
@@ -129,7 +135,7 @@ func ProcessText(input string) string {
 			}
 			for i := 0; i < len(content)-1; i++ {
 				if content[i] == "a" || content[i] == "A" {
-					if c, ok := nextWordStart(content, i); ok && isvowel(c) {
+					if isvowel(nextWordStart(content, i)) {
 						if content[i] == "a" {
 							content[i] = "an"
 						} else {
@@ -159,7 +165,10 @@ func main() {
 	}
 	input := os.Args[1]
 	outputfile := os.Args[2]
-
+	if err := checkOutput(outputfile); err != nil {
+		fmt.Fprintln(os.Stderr, "error:", err)
+		os.Exit(1)
+	}
 	Bytecontent, err := os.ReadFile(input)
 	if err != nil {
 		fmt.Println("error:", err)

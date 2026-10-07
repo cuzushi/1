@@ -8,7 +8,7 @@ func quote(text string) string {
 	var join string
 	var app []string
 	text1 := strings.Split(text, "\n")
-	for  j:= 0; j < len(text1); j++ {
+	for j := 0; j < len(text1); j++ {
 
 		words := strings.Fields(text1[j])
 		inquote := false
@@ -30,7 +30,7 @@ func quote(text string) string {
 					}
 				}
 			}
-			
+
 		}
 		join = strings.Join(words, " ")
 		app = append(app, join)
