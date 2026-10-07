@@ -22,6 +22,20 @@ go run . input.txt output.txt
 
 If the previous word is not a valid number, it is left unchanged and the tag is simply removed.
 
+Hexadecimal (base 16)
+
+• Maximum: 7fffffffffffffff
+
+• Minimum: -8000000000000000
+
+Binary (base 2)
+
+• Maximum: 111111111111111111111111111111111111111111111111111111111111111
+
+• Minimum: -1000000000000000000000000000000000000000000000000000000000000000 
+
+
+
 ### 2. Case conversion
 
 | Tag | What it does | Example |
@@ -37,7 +51,10 @@ This is so exciting (up, 2)   →   This is SO EXCITING
 ```
 
 Works the same with `(low, N)` and `(cap, N)`.
-Yo should respect this format to work " (low, <number>) "(u can put one space or  multiple spaces between low, and <number>)
+
+You should respect this format to work " (low, nb) " (u can put one space or  multiple spaces between low, and nb) and don't put a space between nb and ")" same thing with low,up and cap 
+
+you should respect the space between (low, nb) and other words bcz any attached with a word it will treat as part of the world
 
 ### 3. Article correction
 
@@ -57,6 +74,7 @@ A single quote `'` standing alone is attached to the word next to it, so quotes 
 He said: ' I am happy '   →   He said: 'I am happy'
 ```
 it shouldn't be attached to any word or it would treated like a part of the word 
+it wouldn't work if there's any attached with another characters
 
 ### 5. Punctuation formatting
 
