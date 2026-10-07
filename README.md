@@ -59,6 +59,7 @@ you should respect the space between (low, nb) and other words bcz any attached 
 ### 3. Article correction
 
 `a` becomes `an` (and `A` becomes `An`) when the next word starts with a vowel (`a, e, i, o, u`) or `h`.
+
  a shouldn't be attached to any other characters except Control Characters
 
 ```
@@ -75,6 +76,7 @@ A single quote `'` standing alone is attached to the word next to it, so quotes 
 He said: ' I am happy '   →   He said: 'I am happy'
 ```
 it shouldn't be attached to any word or it would treated like a part of the word 
+
 it wouldn't work if there's any attached with another characters except Control Characters
 
 ### 5. Punctuation formatting
